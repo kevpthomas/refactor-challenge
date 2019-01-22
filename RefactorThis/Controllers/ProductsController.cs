@@ -15,7 +15,7 @@ namespace refactor_this.Controllers
             return new Products();
         }
 
-        [Route]
+        [Route("{name}")]
         [HttpGet]
         public Products SearchByName(string name)
         {
