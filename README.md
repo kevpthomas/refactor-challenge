@@ -10,6 +10,18 @@ Once completed, send back your solution in a zip file (source code only please t
 
 Good luck!
 
+## Issues
+* Swagger missing
+* IoC missing
+* Suboptimal architecture (not onion or ports-and-adapters)
+* No unit tests
+* Missing validation on API PUT/POST/DELETE endpoints
+* Duplicate Id required on several PUT/POST endpoints
+* Constant connection string (not in config file)
+* Multiple classes in Products.cs
+* API models violate Single Responsibility - repository functions embedded in models
+
+
 ## Instructions
 
 To set up the project:

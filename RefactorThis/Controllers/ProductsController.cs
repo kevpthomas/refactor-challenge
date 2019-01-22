@@ -40,6 +40,7 @@ namespace refactor_this.Controllers
             product.Save();
         }
 
+        // TODO: remove Id from Product body
         [Route("{id}")]
         [HttpPut]
         public void Update(Guid id, Product product)
@@ -82,6 +83,7 @@ namespace refactor_this.Controllers
             return option;
         }
 
+        // TODO: remove ProductId from ProductOption body
         [Route("{productId}/options")]
         [HttpPost]
         public void CreateOption(Guid productId, ProductOption option)
@@ -90,6 +92,7 @@ namespace refactor_this.Controllers
             option.Save();
         }
 
+        // TODO: remove Id and ProductId from ProductOption body
         [Route("{productId}/options/{id}")]
         [HttpPut]
         public void UpdateOption(Guid id, ProductOption option)
