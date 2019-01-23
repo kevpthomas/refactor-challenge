@@ -22,16 +22,18 @@ namespace RefactorThis.Controllers
 
         [Route]
         [HttpGet]
-        public Products GetAll()
+        public IHttpActionResult GetAll()
         {
-            return new Products();
+            var products = new Products();
+            return Ok(Mapper.Map<ProductsDto>(products));
         }
 
         [Route("search")]
         [HttpGet]
-        public Products SearchByName(string name)
+        public IHttpActionResult SearchByName(string name)
         {
-            return new Products(name);
+            var products = new Products(name);
+            return Ok(Mapper.Map<ProductsDto>(products));
         }
 
         [Route("{id}")]
@@ -79,20 +81,21 @@ namespace RefactorThis.Controllers
 
         [Route("{productId}/options")]
         [HttpGet]
-        public ProductOptions GetOptions(Guid productId)
+        public IHttpActionResult GetOptions(Guid productId)
         {
-            return new ProductOptions(productId);
+            var productOptions = new ProductOptions(productId);
+            return Ok(Mapper.Map<ProductOptionsDto>(productOptions));
         }
 
         [Route("{productId}/options/{id}")]
         [HttpGet]
-        public ProductOption GetOption(Guid productId, Guid id)
+        public IHttpActionResult GetOption(Guid productId, Guid id)
         {
             var option = new ProductOption(id);
             if (option.IsNew)
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+                return NotFound();
 
-            return option;
+            return Ok(Mapper.Map<ProductOptionDto>(option));
         }
 
         // TODO: remove ProductId from ProductOption body
