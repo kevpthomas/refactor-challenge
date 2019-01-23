@@ -73,10 +73,11 @@ namespace RefactorThis.Controllers
 
         [Route("{id}")]
         [HttpDelete]
-        public void Delete(Guid id)
+        public IHttpActionResult Delete(Guid id)
         {
             var product = new Product(id);
             product.Delete();
+            return Ok();
         }
 
         [Route("{productId}/options")]
@@ -124,10 +125,11 @@ namespace RefactorThis.Controllers
 
         [Route("{productId}/options/{id}")]
         [HttpDelete]
-        public void DeleteOption(Guid id)
+        public IHttpActionResult DeleteOption(Guid id)
         {
             var opt = new ProductOption(id);
             opt.Delete();
+            return Ok();
         }
     }
 }
