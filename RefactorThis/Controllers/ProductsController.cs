@@ -11,6 +11,13 @@ namespace RefactorThis.Controllers
     [RoutePrefix("products")]
     public class ProductsController : ApiController
     {
+        /*
+         * Refactor to return my DTO objects wrapped in IHttpActionResult
+         *   needs AutoMapper
+         * Then refactor to repository
+         * Then refactor to correct HTTP codes, time permitting
+         */
+
         [Route]
         [HttpGet]
         public Products GetAll()
