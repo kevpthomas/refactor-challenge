@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net;
 using System.Web.Http;
+using AutoMapper;
+using RefactorThis.ApiModels;
 using RefactorThis.Models;
 
 namespace RefactorThis.Controllers
@@ -25,7 +27,7 @@ namespace RefactorThis.Controllers
             return new Products();
         }
 
-        [Route("{name}")]
+        [Route("search")]
         [HttpGet]
         public Products SearchByName(string name)
         {
@@ -34,13 +36,13 @@ namespace RefactorThis.Controllers
 
         [Route("{id}")]
         [HttpGet]
-        public Product GetProduct(Guid id)
+        public IHttpActionResult GetProduct(Guid id)
         {
             var product = new Product(id);
             if (product.IsNew)
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+                return NotFound();
 
-            return product;
+            return Ok(Mapper.Map<ProductDto>(product));
         }
 
         [Route]
