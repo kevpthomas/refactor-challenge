@@ -1,6 +1,6 @@
 ﻿using System.Web.Http;
 
-namespace refactor_this
+namespace RefactorThis
 {
     public static class WebApiConfig
     {

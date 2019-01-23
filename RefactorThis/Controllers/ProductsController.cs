@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Net;
 using System.Web.Http;
-using System.Web.Http.Results;
-using refactor_this.Models;
+using RefactorThis.Models;
 
-namespace refactor_this.Controllers
+namespace RefactorThis.Controllers
 {
     // TODO: for all endpoints, return IHttpActionResult (e.g., base.Ok) with relevant model
     // TODO: return code 422 for bad ID submission (benandel.com)

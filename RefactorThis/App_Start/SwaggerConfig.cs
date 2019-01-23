@@ -1,11 +1,11 @@
 using System.Web.Http;
 using WebActivatorEx;
-using refactor_me;
 using Swashbuckle.Application;
+using RefactorThis;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
-namespace refactor_me
+namespace RefactorThis
 {
     public class SwaggerConfig
     {

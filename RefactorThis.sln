@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RefactorThis.Core", "RefactorThis.Core\RefactorThis.Core.csproj", "{BEF92C2D-56EA-43C3-AF2E-703000C319BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RefactorThis.Infrastructure", "RefactorThis.Infrastructure\RefactorThis.Infrastructure.csproj", "{F987A0B6-2CC4-41C7-B8E1-DB9A215E8074}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +24,14 @@ Global
 		{20AB69F9-F2D3-4A68-96C3-424EC8B9406E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20AB69F9-F2D3-4A68-96C3-424EC8B9406E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20AB69F9-F2D3-4A68-96C3-424EC8B9406E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEF92C2D-56EA-43C3-AF2E-703000C319BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEF92C2D-56EA-43C3-AF2E-703000C319BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEF92C2D-56EA-43C3-AF2E-703000C319BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEF92C2D-56EA-43C3-AF2E-703000C319BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F987A0B6-2CC4-41C7-B8E1-DB9A215E8074}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F987A0B6-2CC4-41C7-B8E1-DB9A215E8074}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F987A0B6-2CC4-41C7-B8E1-DB9A215E8074}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F987A0B6-2CC4-41C7-B8E1-DB9A215E8074}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
