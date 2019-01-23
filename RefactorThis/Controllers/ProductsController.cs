@@ -7,17 +7,15 @@ using RefactorThis.Models;
 
 namespace RefactorThis.Controllers
 {
-    // TODO: for all endpoints, return IHttpActionResult (e.g., base.Ok) with relevant model
-    // TODO: return code 422 for bad ID submission (benandel.com)
-    // TODO: refactor to use AutoMapper and Repository; also need IoC
     [RoutePrefix("products")]
     public class ProductsController : ApiController
     {
         /*
-         * Refactor to return my DTO objects wrapped in IHttpActionResult
-         *   needs AutoMapper
+         * DONE Refactor to return my DTO objects wrapped in IHttpActionResult
+         * Then refactor to return generic error if anything goes wrong
          * Then refactor to repository
          * Then refactor to correct HTTP codes, time permitting
+         *     e.g., code 422 for bad ID submission (benandel.com)
          */
 
         [Route]
@@ -49,15 +47,17 @@ namespace RefactorThis.Controllers
 
         [Route]
         [HttpPost]
-        public void Create(Product product)
+        public IHttpActionResult Create(Product product)
         {
             product.Save();
+            
+            return Ok(Mapper.Map<ProductDto>(product));
         }
 
         // TODO: remove Id from Product body
         [Route("{id}")]
         [HttpPut]
-        public void Update(Guid id, Product product)
+        public IHttpActionResult Update(Guid id, Product product)
         {
             var orig = new Product(id)
             {
@@ -69,6 +69,8 @@ namespace RefactorThis.Controllers
 
             if (!orig.IsNew)
                 orig.Save();
+            
+            return Ok(Mapper.Map<ProductDto>(orig));
         }
 
         [Route("{id}")]
@@ -102,16 +104,18 @@ namespace RefactorThis.Controllers
         // TODO: remove ProductId from ProductOption body
         [Route("{productId}/options")]
         [HttpPost]
-        public void CreateOption(Guid productId, ProductOption option)
+        public IHttpActionResult CreateOption(Guid productId, ProductOption option)
         {
             option.ProductId = productId;
             option.Save();
+
+            return Ok(Mapper.Map<ProductOptionDto>(option));
         }
 
         // TODO: remove Id and ProductId from ProductOption body
         [Route("{productId}/options/{id}")]
         [HttpPut]
-        public void UpdateOption(Guid id, ProductOption option)
+        public IHttpActionResult UpdateOption(Guid id, ProductOption option)
         {
             var orig = new ProductOption(id)
             {
@@ -121,6 +125,8 @@ namespace RefactorThis.Controllers
 
             if (!orig.IsNew)
                 orig.Save();
+
+            return Ok(Mapper.Map<ProductOptionDto>(orig));
         }
 
         [Route("{productId}/options/{id}")]

@@ -5,7 +5,7 @@ I've tested all of the endpoints fairly carefully, existing functionality seems 
 - all Posts work (see below for dangerous error message)
 - all Deletes work; when Delete Product, all ProductOptions are deleted without error
 
-
+*** NEED TO TEST UPDATES - WHEN SUBMIT NEW VS UPDATE
 
 When submit bad request (e.g., duplicate Id when post new Product), dangerous error details are exposed
 {
