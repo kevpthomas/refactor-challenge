@@ -1,16 +1,14 @@
-﻿using System.Data.SqlClient;
-using System.Web;
+﻿using System.Configuration;
+using System.Data.SqlClient;
 
 namespace RefactorThis.Models
 {
     public class Helpers
     {
-        private const string ConnectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={DataDirectory}\Database.mdf;Integrated Security=True";
-
         public static SqlConnection NewConnection()
         {
-            var connstr = ConnectionString.Replace("{DataDirectory}", HttpContext.Current.Server.MapPath("~/App_Data"));
-            return new SqlConnection(connstr);
+            return new SqlConnection(ConfigurationManager.
+                ConnectionStrings["DefaultConnectionString"].ConnectionString);
         }
     }
 }
