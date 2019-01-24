@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using NPoco;
 using RefactorThis.Core.Entities;
 using RefactorThis.Core.Exceptions;
@@ -22,7 +21,7 @@ namespace RefactorThis.Infrastructure.Data
         {
             try
             {
-                var sql = new Sql().Append($"select * from {TableName}");
+                var sql = new Sql().Append(GenericSelect);
 
                 using (var db = CreateDatabase()) 
                 {
@@ -40,7 +39,7 @@ namespace RefactorThis.Infrastructure.Data
         {
             try
             {
-                var sql = new Sql().Append($"select * from {TableName} where id = @0", id);
+                var sql = new Sql().Append($"{GenericSelect} where id = @0", id);
 
                 using (var db = CreateDatabase()) 
                 {
@@ -58,7 +57,7 @@ namespace RefactorThis.Infrastructure.Data
         {
             try
             {
-                var sql = new Sql().Append($"select * from {TableName} where lower(name) like @0", $"%{name.ToLower()}%");
+                var sql = new Sql().Append($"{GenericSelect} where lower(name) like @0", $"%{name.ToLower()}%");
                 using (var db = CreateDatabase()) 
                 {
                     var products = db.Fetch<Product>(sql);
@@ -68,65 +67,6 @@ namespace RefactorThis.Infrastructure.Data
             catch (Exception e)
             {
                 throw new DataException($"Select error for {nameof(name)} = '{name}'", e);
-            }
-        }
-
-        public Product Add(Product entity)
-        {
-            try
-            {
-                using (var db = CreateDatabase())
-                {
-                    var id = (Guid)db.Insert(TableName, nameof(entity.Id), false, entity);
-
-                    if (id != entity.Id)
-                        throw new ArgumentException();
-
-                    return entity;
-                }
-            }
-            catch (Exception e)
-            {
-                throw new DataException($"Insert error for {nameof(entity)} = {JsonConvert.SerializeObject(entity)}", e);
-            }
-        }
-
-        public Product Update(Product entity)
-        {
-            try
-            {
-                using (var db = CreateDatabase())
-                {
-                    var updateCount = db.Update(TableName, nameof(entity.Id), entity);
-
-                    if (updateCount == 0)
-                        throw new ArgumentException();
-
-                    return entity;
-                }
-            }
-            catch (Exception e)
-            {
-                throw new DataException($"Update error for {nameof(entity)} = {JsonConvert.SerializeObject(entity)}", e);
-            }
-        }
-
-        public void Delete(Guid id)
-        {
-            try
-            {
-                using (var db = CreateDatabase())
-                {
-                    var product = new Product {Id = id};
-                    var deleteCount = db.Delete(TableName, nameof(product.Id), product);
-
-                    if (deleteCount == 0)
-                        throw new ArgumentException();
-                }
-            }
-            catch (Exception e)
-            {
-                throw new DataException($"Delete error for {nameof(id)} = {JsonConvert.SerializeObject(id)}", e);
             }
         }
     }

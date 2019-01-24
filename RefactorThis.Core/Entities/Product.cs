@@ -1,4 +1,5 @@
-﻿using RefactorThis.Core.SharedKernel;
+﻿using System;
+using RefactorThis.Core.SharedKernel;
 
 namespace RefactorThis.Core.Entities
 {
@@ -11,5 +12,10 @@ namespace RefactorThis.Core.Entities
         public decimal Price { get; set; }
 
         public decimal DeliveryPrice { get; set; }
+
+        public static Product FromId(Guid id)
+        {
+            return new Product {Id = id};
+        }
     }
 }

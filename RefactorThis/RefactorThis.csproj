@@ -119,7 +119,7 @@
     </Compile>
     <Compile Include="IoC\TinyIocWebApiDependencyResolver.cs" />
     <Compile Include="Models\Helpers.cs" />
-    <Compile Include="Models\Products.cs" />
+    <Compile Include="Models\ProductsObsolete.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TinyIoC.cs" />
   </ItemGroup>

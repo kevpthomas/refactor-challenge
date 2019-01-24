@@ -7,15 +7,11 @@ namespace RefactorThis.Core.Interfaces
     /// <summary>
     /// Describes CRUD functionality for Product entities.
     /// </summary>
-    public interface IProductRepository
+    public interface IProductRepository : IRepository
     {
         IEnumerable<Product> List();
 
         Product GetById(Guid id);
         IEnumerable<Product> GetByName(string name);
-
-        Product Add(Product entity);
-        Product Update(Product entity);
-        void Delete(Guid id);
     }
 }

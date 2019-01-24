@@ -2,7 +2,6 @@
 using RefactorThis.ApiModels;
 using RefactorThis.Core.Entities;
 using RefactorThis.Models;
-using ProductOption = RefactorThis.Models.ProductOption;
 
 namespace RefactorThis
 {
@@ -16,12 +15,12 @@ namespace RefactorThis
                 cfg.CreateMap<ProductUpdateDto, Product>()
                     .ForMember(dest => dest.Id, opt => opt.Ignore());
 
-                //TODO: remove this ProductObsolete/ProductDto mapping
-                cfg.CreateMap<ProductObsolete, ProductDto>();
-                cfg.CreateMap<Products, ProductsDto>();
-
-                cfg.CreateMap<ProductOption, ProductOptionDto>();
-                cfg.CreateMap<ProductOptionsObsolete, ProductOptionsDto>();
+                cfg.CreateMap<ProductOption, ProductOptionDto>().ReverseMap();
+                cfg.CreateMap<ProductOptionInsertDto, ProductOption>()
+                    .ForMember(dest => dest.ProductId, opt => opt.Ignore());
+                cfg.CreateMap<ProductOptionUpdateDto, ProductOption>()
+                    .ForMember(dest => dest.Id, opt => opt.Ignore())
+                    .ForMember(dest => dest.ProductId, opt => opt.Ignore());
             });
         }
     }

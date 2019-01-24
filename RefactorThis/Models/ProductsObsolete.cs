@@ -5,16 +5,17 @@ using Newtonsoft.Json;
 
 namespace RefactorThis.Models
 {
-    public class Products
+    [Obsolete]
+    public class ProductsObsolete
     {
         public List<ProductObsolete> Items { get; private set; }
 
-        public Products()
+        public ProductsObsolete()
         {
             LoadProducts(null);
         }
 
-        public Products(string name)
+        public ProductsObsolete(string name)
         {
             LoadProducts($"where lower(name) like '%{name.ToLower()}%'");
         }
@@ -102,7 +103,7 @@ namespace RefactorThis.Models
     [Obsolete]
     public class ProductOptionsObsolete
     {
-        public List<ProductOption> Items { get; private set; }
+        public List<ProductOptionObsolete> Items { get; private set; }
 
         public ProductOptionsObsolete()
         {
@@ -116,7 +117,7 @@ namespace RefactorThis.Models
 
         private void LoadProductOptions(string where)
         {
-            Items = new List<ProductOption>();
+            Items = new List<ProductOptionObsolete>();
             var conn = Helpers.NewConnection();
             var cmd = new SqlCommand($"select id from productoption {where}", conn);
             conn.Open();
@@ -125,12 +126,13 @@ namespace RefactorThis.Models
             while (rdr.Read())
             {
                 var id = Guid.Parse(rdr["id"].ToString());
-                Items.Add(new ProductOption(id));
+                Items.Add(new ProductOptionObsolete(id));
             }
         }
     }
 
-    public class ProductOption
+    [Obsolete]
+    public class ProductOptionObsolete
     {
         public Guid Id { get; set; }
 
@@ -143,13 +145,13 @@ namespace RefactorThis.Models
         [JsonIgnore]
         public bool IsNew { get; }
 
-        public ProductOption()
+        public ProductOptionObsolete()
         {
             Id = Guid.NewGuid();
             IsNew = true;
         }
 
-        public ProductOption(Guid id)
+        public ProductOptionObsolete(Guid id)
         {
             IsNew = true;
             var conn = Helpers.NewConnection();

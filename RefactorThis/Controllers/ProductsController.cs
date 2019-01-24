@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Web.Http;
 using AutoMapper;
 using RefactorThis.ApiModels;
 using RefactorThis.Core.Entities;
 using RefactorThis.Core.Exceptions;
 using RefactorThis.Core.Interfaces;
-using RefactorThis.Models;
-using ProductOption = RefactorThis.Models.ProductOption;
 
 namespace RefactorThis.Controllers
 {
@@ -20,19 +17,20 @@ namespace RefactorThis.Controllers
          * DONE Then refactor to return generic error if anything goes wrong
          * DONE Then refactor to use a stub logger
          * DONE Then refactor so that all endpoints request only the necessary details in the DTO model
-         * Then refactor to repository
-         * Then refactor to correct HTTP codes, time permitting
-         *     e.g., code 422 for bad ID submission (benandel.com)
+         * DONE Then refactor to repository
          */
 
         private readonly ILogger _logger;
         private readonly IProductRepository _productRepository;
+        private readonly IProductOptionRepository _productOptionRepository;
 
         public ProductsController(ILogger logger,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            IProductOptionRepository productOptionRepository)
         {
             _logger = logger;
             _productRepository = productRepository;
+            _productOptionRepository = productOptionRepository;
         }
 
         [Route]
@@ -116,7 +114,7 @@ namespace RefactorThis.Controllers
         {
             return ProcessRequestAndHandleException(() =>
             {
-                _productRepository.Delete(id);
+                _productRepository.Delete(Product.FromId(id));
 
                 return Ok();
             });
@@ -128,8 +126,14 @@ namespace RefactorThis.Controllers
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var productOptions = new ProductOptionsObsolete(productId);
-                return Ok(Mapper.Map<ProductOptionsDto>(productOptions));
+                var productOptions = _productOptionRepository.List(productId);
+
+                var productOptionsDto = new ProductOptionsDto
+                {
+                    Items = Mapper.Map<IEnumerable<ProductOptionDto>>(productOptions)
+                };
+
+                return Ok(productOptionsDto);
             });
         }
 
@@ -139,65 +143,54 @@ namespace RefactorThis.Controllers
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var option = new ProductOption(id);
-                if (option.IsNew)
+                var productOption = _productOptionRepository.GetById(productId, id);
+
+                if (productOption == null)
                     return NotFound();
 
-                return Ok(Mapper.Map<ProductOptionDto>(option));
+                return Ok(Mapper.Map<ProductOptionDto>(productOption));
             });
         }
 
         [Route("{productId}/options")]
         [HttpPost]
-        public IHttpActionResult CreateOption(Guid productId, ProductOptionInsertDto optionDto)
+        public IHttpActionResult CreateOption(Guid productId, ProductOptionInsertDto option)
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var orig = new ProductOption
-                {
-                    Id = optionDto.Id,
-                    ProductId = productId,
-                    Description = optionDto.Description,
-                    Name = optionDto.Name
-                };
+                var productOption = Mapper.Map<ProductOption>(option);
+                productOption.ProductId = productId;
 
-                orig.Save();
-
-                return Ok(Mapper.Map<ProductOptionDto>(orig));
+                var insertedProductOption = _productOptionRepository.Add(productOption);
+            
+                return Ok(Mapper.Map<ProductOptionDto>(insertedProductOption));
             });
         }
 
-        // TODO: should use supplied productId
         [Route("{productId}/options/{id}")]
         [HttpPut]
-        public IHttpActionResult UpdateOption(Guid id, ProductOptionUpdateDto option)
+        public IHttpActionResult UpdateOption(Guid productId, Guid id, ProductOptionUpdateDto option)
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var orig = new ProductOption(id)
-                {
-                    Name = option.Name,
-                    Description = option.Description
-                };
+                var productOption = Mapper.Map<ProductOption>(option);
+                productOption.Id = id;
+                productOption.ProductId = productId;
 
-                if (orig.IsNew)
-                    return BadRequest();
-
-                orig.Save();
-
-                return Ok(Mapper.Map<ProductOptionDto>(orig));
+                var updatedProductOption = _productOptionRepository.Update(productOption);
+            
+                return Ok(Mapper.Map<ProductOptionDto>(updatedProductOption));
             });
         }
 
-        // TODO: should use supplied productId
         [Route("{productId}/options/{id}")]
         [HttpDelete]
-        public IHttpActionResult DeleteOption(Guid id)
+        public IHttpActionResult DeleteOption(Guid productId, Guid id)
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var opt = new ProductOption(id);
-                opt.Delete();
+                _productOptionRepository.Delete(ProductOption.FromId(productId, id));
+
                 return Ok();
             });
         }
@@ -223,14 +216,6 @@ namespace RefactorThis.Controllers
             }
             catch (DataException ex)
             {
-                // making an assumption that any SQL exception is the result of invalid parameters in the request
-                _logger.Log(ex);
-                return BadRequest();
-            }
-            catch (SqlException ex)
-            {
-                //TODO: remove this catch statement after refactor to repository pattern
-
                 // making an assumption that any SQL exception is the result of invalid parameters in the request
                 _logger.Log(ex);
                 return BadRequest();
