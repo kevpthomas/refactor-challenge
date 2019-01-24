@@ -45,6 +45,7 @@
     <Compile Include="Entities\ProductEntity.cs" />
     <Compile Include="Entities\ProductOptionEntity.cs" />
     <Compile Include="Interfaces\ILogger.cs" />
+    <Compile Include="Interfaces\IProductRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharedKernel\Entity.cs" />
   </ItemGroup>
