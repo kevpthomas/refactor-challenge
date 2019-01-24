@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Web.Http;
 using AutoMapper;
@@ -38,8 +39,13 @@ namespace RefactorThis.Controllers
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var products = new Products();
-                return Ok(Mapper.Map<ProductsDto>(products));
+                var products = _productRepository.List();
+                var productsDto = new ProductsDto
+                {
+                    Items = Mapper.Map<IEnumerable<ProductDto>>(products)
+                };
+
+                return Ok(productsDto);
             });
         }
 
@@ -49,8 +55,13 @@ namespace RefactorThis.Controllers
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var products = new Products(name);
-                return Ok(Mapper.Map<ProductsDto>(products));
+                var products = _productRepository.GetByName(name);
+                var productsDto = new ProductsDto
+                {
+                    Items = Mapper.Map<IEnumerable<ProductDto>>(products)
+                };
+
+                return Ok(productsDto);
             });
         }
 

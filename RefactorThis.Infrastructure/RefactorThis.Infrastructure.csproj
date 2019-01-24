@@ -48,8 +48,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\DatabaseFactory.cs" />
     <Compile Include="Data\ProductRepository.cs" />
     <Compile Include="Data\Repository.cs" />
+    <Compile Include="Interfaces\IPetaPocoDatabaseFactory.cs" />
     <Compile Include="Log\DebugLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

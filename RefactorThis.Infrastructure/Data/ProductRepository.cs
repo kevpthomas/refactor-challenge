@@ -7,14 +7,32 @@ using NPoco;
 using RefactorThis.Core.Entities;
 using RefactorThis.Core.Exceptions;
 using RefactorThis.Core.Interfaces;
+using RefactorThis.Infrastructure.Interfaces;
 
 namespace RefactorThis.Infrastructure.Data
 {
-    public class ProductRepository : IProductRepository
+    public class ProductRepository : Repository, IProductRepository
     {
+        public ProductRepository(INPocoDatabaseFactory databaseFactory) : base(databaseFactory)
+        {
+        }
+
         public IEnumerable<ProductEntity> List()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var sql = new Sql().Append(@"select * from product");
+
+                using (var db = CreateDatabase()) 
+                {
+                    var products = db.Fetch<ProductEntity>(sql);
+                    return products;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new DataException("SQL error retrieving all products", e);
+            }
         }
 
         public ProductEntity GetById(Guid id)
@@ -23,7 +41,7 @@ namespace RefactorThis.Infrastructure.Data
             {
                 var sql = new Sql().Append(@"select * from product where id = @0", id);
 
-                using (IDatabase db = new Database("DefaultConnectionString")) 
+                using (var db = CreateDatabase()) 
                 {
                     var product = db.Fetch<ProductEntity>(sql).SingleOrDefault();
                     return product;
@@ -31,13 +49,25 @@ namespace RefactorThis.Infrastructure.Data
             }
             catch (Exception e)
             {
-                throw new DataException($"SQL error for Id = {id}", e);
+                throw new DataException($"SQL error for {nameof(id)} = {id}", e);
             }
         }
 
         public IEnumerable<ProductEntity> GetByName(string name)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var sql = new Sql().Append(@"select * from product where lower(name) like @0", $"%{name.ToLower()}%");
+                using (var db = CreateDatabase()) 
+                {
+                    var products = db.Fetch<ProductEntity>(sql);
+                    return products;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new DataException($"SQL error for {nameof(name)} = '{name}'", e);
+            }
         }
 
         public ProductEntity Add(ProductEntity entity)
