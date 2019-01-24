@@ -7,6 +7,11 @@ I've tested all of the endpoints fairly carefully, existing functionality seems 
 
 *** NEED TO TEST UPDATES - WHEN SUBMIT NEW VS UPDATE
 
+Deliberately allow submit GUID for POST Production & ProductOption. Need to make a note in feedback README that
+this would be a consideration for removal depending on the business requirements.
+
+*** UPDATE - looks like the Product code expects to set the Guid. Should at least comment about this discrepency.
+
 When submit bad request (e.g., duplicate Id when post new Product), dangerous error details are exposed
 {
   "Message": "An error has occurred.",

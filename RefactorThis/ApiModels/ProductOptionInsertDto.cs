@@ -2,7 +2,7 @@
 
 namespace RefactorThis.ApiModels
 {
-    public class ProductDto : ProductUpdateDto
+    public class ProductOptionInsertDto : ProductOptionUpdateDto
     {
         public Guid Id { get; set; }
     }

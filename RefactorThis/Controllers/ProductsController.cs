@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Web.Http;
 using AutoMapper;
 using RefactorThis.ApiModels;
@@ -14,6 +15,7 @@ namespace RefactorThis.Controllers
          * DONE Refactor to return my DTO objects wrapped in IHttpActionResult
          * DONE Then refactor to return generic error if anything goes wrong
          * DONE Then refactor to use a stub logger
+         * DONE Then refactor so that all endpoints request only the necessary details in the DTO model
          * Then refactor to repository
          * Then refactor to correct HTTP codes, time permitting
          *     e.g., code 422 for bad ID submission (benandel.com)
@@ -74,10 +76,9 @@ namespace RefactorThis.Controllers
             });
         }
 
-        // TODO: remove Id from Product body
         [Route("{id}")]
         [HttpPut]
-        public IHttpActionResult Update(Guid id, Product product)
+        public IHttpActionResult Update(Guid id, ProductUpdateDto product)
         {
             return ProcessRequestAndHandleException(() =>
             {
@@ -133,24 +134,30 @@ namespace RefactorThis.Controllers
             });
         }
 
-        // TODO: remove ProductId from ProductOption body
         [Route("{productId}/options")]
         [HttpPost]
-        public IHttpActionResult CreateOption(Guid productId, ProductOption option)
+        public IHttpActionResult CreateOption(Guid productId, ProductOptionInsertDto optionDto)
         {
             return ProcessRequestAndHandleException(() =>
             {
-                option.ProductId = productId;
-                option.Save();
+                var orig = new ProductOption
+                {
+                    Id = optionDto.Id,
+                    ProductId = productId,
+                    Description = optionDto.Description,
+                    Name = optionDto.Name
+                };
 
-                return Ok(Mapper.Map<ProductOptionDto>(option));
+                orig.Save();
+
+                return Ok(Mapper.Map<ProductOptionDto>(orig));
             });
         }
 
-        // TODO: remove Id and ProductId from ProductOption body
+        // TODO: should use supplied productId
         [Route("{productId}/options/{id}")]
         [HttpPut]
-        public IHttpActionResult UpdateOption(Guid id, ProductOption option)
+        public IHttpActionResult UpdateOption(Guid id, ProductOptionUpdateDto option)
         {
             return ProcessRequestAndHandleException(() =>
             {
@@ -160,13 +167,16 @@ namespace RefactorThis.Controllers
                     Description = option.Description
                 };
 
-                if (!orig.IsNew)
-                    orig.Save();
+                if (orig.IsNew)
+                    return BadRequest();
+
+                orig.Save();
 
                 return Ok(Mapper.Map<ProductOptionDto>(orig));
             });
         }
 
+        // TODO: should use supplied productId
         [Route("{productId}/options/{id}")]
         [HttpDelete]
         public IHttpActionResult DeleteOption(Guid id)
@@ -197,6 +207,12 @@ namespace RefactorThis.Controllers
             try
             {
                 return processRequest();
+            }
+            catch (SqlException ex)
+            {
+                // making an assumption that any SQL exception is the result of invalid parameters in the request
+                _logger.Log(ex);
+                return BadRequest();
             }
             catch (Exception ex)
             {
