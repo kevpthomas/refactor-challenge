@@ -20,7 +20,7 @@ namespace RefactorThis
             // auto-register all dependencies
             TinyIoCContainer.Current.AutoRegister();
 
-            // Set Web API dependency resolver
+            // Set Web API dependency resolver to allow injection into API controllers
             GlobalConfiguration.Configuration.DependencyResolver = new TinyIocWebApiDependencyResolver(TinyIoCContainer.Current);
         }
     }

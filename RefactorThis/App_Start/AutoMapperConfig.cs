@@ -9,6 +9,9 @@ namespace RefactorThis
     /// </summary>
     public static class AutoMapperConfig
     {
+        /// <summary>
+        /// Creates all AutoMapper maps.
+        /// </summary>
         public static void ConfigureMappings()
         {
             Mapper.Initialize(cfg =>

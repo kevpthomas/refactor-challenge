@@ -8,6 +8,9 @@ using RefactorThis.Infrastructure.Interfaces;
 
 namespace RefactorThis.Infrastructure.Data
 {
+    /// <summary>
+    /// Defines shared functionality for all NPoco repositories.
+    /// </summary>
     public abstract class Repository : IRepository
     {
         private readonly INPocoDatabaseFactory _databaseFactory;

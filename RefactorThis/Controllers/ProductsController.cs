@@ -12,14 +12,6 @@ namespace RefactorThis.Controllers
     [RoutePrefix("products")]
     public class ProductsController : ApiController
     {
-        /*
-         * DONE Refactor to return my DTO objects wrapped in IHttpActionResult
-         * DONE Then refactor to return generic error if anything goes wrong
-         * DONE Then refactor to use a stub logger
-         * DONE Then refactor so that all endpoints request only the necessary details in the DTO model
-         * DONE Then refactor to repository
-         */
-
         private readonly ILogger _logger;
         private readonly IProductRepository _productRepository;
         private readonly IProductOptionRepository _productOptionRepository;
@@ -202,8 +194,8 @@ namespace RefactorThis.Controllers
         /// Function to provide happy path request processing.
         /// </param>
         /// <returns>
-        /// Output from happy path request processing, or an internal server error in the event
-        /// of an unhandled exception.
+        /// Output from happy path request processing, or an alternate HTTP status code
+        /// in the event of an exception.
         /// </returns>
         /// <remarks>
         /// This method ensures no leakage of sensitive framework details.

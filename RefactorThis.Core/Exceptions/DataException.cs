@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace RefactorThis.Core.Exceptions
 {
+    /// <summary>
+    /// Represents an exception thrown for an error retrieving data.
+    /// </summary>
     [Serializable]
     public class DataException : DbException
     {
