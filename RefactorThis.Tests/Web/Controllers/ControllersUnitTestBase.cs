@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using AutoMapper;
+using NUnit.Framework;
 
 namespace RefactorThis.Tests.Web.Controllers
 {
@@ -8,6 +9,7 @@ namespace RefactorThis.Tests.Web.Controllers
         [OneTimeSetUp]
         public void SetUpFixture()
         {
+            Mapper.Reset();
             AutoMapperConfig.ConfigureMappings();
         }
     }
