@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using RefactorThis.ApiModels;
+using RefactorThis.Core.Entities;
 using RefactorThis.Models;
 
 namespace RefactorThis
@@ -10,6 +11,10 @@ namespace RefactorThis
         {
             Mapper.Initialize(cfg =>
             {
+                cfg.CreateMap<ProductEntity, ProductDto>();
+
+
+                //TODO: remove this Product/ProductDto mapping
                 cfg.CreateMap<Product, ProductDto>();
                 cfg.CreateMap<Products, ProductsDto>();
 

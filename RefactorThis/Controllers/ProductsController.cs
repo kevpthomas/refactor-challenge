@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Web.Http;
 using AutoMapper;
 using RefactorThis.ApiModels;
+using RefactorThis.Core.Exceptions;
 using RefactorThis.Core.Interfaces;
 using RefactorThis.Models;
 
@@ -22,10 +23,13 @@ namespace RefactorThis.Controllers
          */
 
         private readonly ILogger _logger;
+        private readonly IProductRepository _productRepository;
 
-        public ProductsController(ILogger logger)
+        public ProductsController(ILogger logger,
+            IProductRepository productRepository)
         {
             _logger = logger;
+            _productRepository = productRepository;
         }
 
         [Route]
@@ -56,8 +60,8 @@ namespace RefactorThis.Controllers
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var product = new Product(id);
-                if (product.IsNew)
+                var product = _productRepository.GetById(id);
+                if (product == null)
                     return NotFound();
 
                 return Ok(Mapper.Map<ProductDto>(product));
@@ -208,8 +212,16 @@ namespace RefactorThis.Controllers
             {
                 return processRequest();
             }
+            catch (DataException ex)
+            {
+                // making an assumption that any SQL exception is the result of invalid parameters in the request
+                _logger.Log(ex);
+                return BadRequest();
+            }
             catch (SqlException ex)
             {
+                //TODO: remove this catch statement after refactor to repository pattern
+
                 // making an assumption that any SQL exception is the result of invalid parameters in the request
                 _logger.Log(ex);
                 return BadRequest();
