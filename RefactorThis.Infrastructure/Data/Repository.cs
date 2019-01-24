@@ -7,6 +7,8 @@ namespace RefactorThis.Infrastructure.Data
     {
         private readonly INPocoDatabaseFactory _databaseFactory;
 
+        protected abstract string TableName { get; }
+
         protected Repository(INPocoDatabaseFactory databaseFactory)
         {
             _databaseFactory = databaseFactory;

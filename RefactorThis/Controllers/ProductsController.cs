@@ -8,6 +8,7 @@ using RefactorThis.Core.Entities;
 using RefactorThis.Core.Exceptions;
 using RefactorThis.Core.Interfaces;
 using RefactorThis.Models;
+using ProductOption = RefactorThis.Models.ProductOption;
 
 namespace RefactorThis.Controllers
 {
@@ -57,6 +58,7 @@ namespace RefactorThis.Controllers
             return ProcessRequestAndHandleException(() =>
             {
                 var products = _productRepository.GetByName(name);
+
                 var productsDto = new ProductsDto
                 {
                     Items = Mapper.Map<IEnumerable<ProductDto>>(products)
@@ -73,6 +75,7 @@ namespace RefactorThis.Controllers
             return ProcessRequestAndHandleException(() =>
             {
                 var product = _productRepository.GetById(id);
+
                 if (product == null)
                     return NotFound();
 
@@ -86,7 +89,7 @@ namespace RefactorThis.Controllers
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var insertedProduct = _productRepository.Add(Mapper.Map<ProductEntity>(product));
+                var insertedProduct = _productRepository.Add(Mapper.Map<Product>(product));
             
                 return Ok(Mapper.Map<ProductDto>(insertedProduct));
             });
@@ -94,22 +97,16 @@ namespace RefactorThis.Controllers
 
         [Route("{id}")]
         [HttpPut]
-        public IHttpActionResult Update(Guid id, ProductUpdateDto product)
+        public IHttpActionResult Update(Guid id, ProductUpdateDto productUpdate)
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var orig = new ProductObsolete(id)
-                {
-                    Name = product.Name,
-                    Description = product.Description,
-                    Price = product.Price,
-                    DeliveryPrice = product.DeliveryPrice
-                };
+                var product = Mapper.Map<Product>(productUpdate);
+                product.Id = id;
 
-                if (!orig.IsNew)
-                    orig.Save();
+                var updatedProduct = _productRepository.Update(product);
             
-                return Ok(Mapper.Map<ProductDto>(orig));
+                return Ok(Mapper.Map<ProductDto>(updatedProduct));
             });
         }
 
@@ -119,8 +116,8 @@ namespace RefactorThis.Controllers
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var product = new ProductObsolete(id);
-                product.Delete();
+                _productRepository.Delete(id);
+
                 return Ok();
             });
         }

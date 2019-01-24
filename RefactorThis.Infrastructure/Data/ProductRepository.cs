@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data.SqlClient;
 using System.Linq;
 using Newtonsoft.Json;
 using NPoco;
@@ -17,16 +15,18 @@ namespace RefactorThis.Infrastructure.Data
         public ProductRepository(INPocoDatabaseFactory databaseFactory) : base(databaseFactory)
         {
         }
+        
+        protected override string TableName => "Product";
 
-        public IEnumerable<ProductEntity> List()
+        public IEnumerable<Product> List()
         {
             try
             {
-                var sql = new Sql().Append(@"select * from product");
+                var sql = new Sql().Append($"select * from {TableName}");
 
                 using (var db = CreateDatabase()) 
                 {
-                    var products = db.Fetch<ProductEntity>(sql);
+                    var products = db.Fetch<Product>(sql);
                     return products;
                 }
             }
@@ -36,15 +36,15 @@ namespace RefactorThis.Infrastructure.Data
             }
         }
 
-        public ProductEntity GetById(Guid id)
+        public Product GetById(Guid id)
         {
             try
             {
-                var sql = new Sql().Append(@"select * from product where id = @0", id);
+                var sql = new Sql().Append($"select * from {TableName} where id = @0", id);
 
                 using (var db = CreateDatabase()) 
                 {
-                    var product = db.Fetch<ProductEntity>(sql).SingleOrDefault();
+                    var product = db.Fetch<Product>(sql).SingleOrDefault();
                     return product;
                 }
             }
@@ -54,14 +54,14 @@ namespace RefactorThis.Infrastructure.Data
             }
         }
 
-        public IEnumerable<ProductEntity> GetByName(string name)
+        public IEnumerable<Product> GetByName(string name)
         {
             try
             {
-                var sql = new Sql().Append(@"select * from product where lower(name) like @0", $"%{name.ToLower()}%");
+                var sql = new Sql().Append($"select * from {TableName} where lower(name) like @0", $"%{name.ToLower()}%");
                 using (var db = CreateDatabase()) 
                 {
-                    var products = db.Fetch<ProductEntity>(sql);
+                    var products = db.Fetch<Product>(sql);
                     return products;
                 }
             }
@@ -71,23 +71,19 @@ namespace RefactorThis.Infrastructure.Data
             }
         }
 
-        public ProductEntity Add(ProductEntity entity)
+        public Product Add(Product entity)
         {
             try
             {
                 using (var db = CreateDatabase())
                 {
-                    var foo = db.Insert(entity);
-                    return entity;
-                    //if (!(db.Insert(entity) is ProductEntity insertedEntity))
-                    //    throw new DataException($"Insert error for {nameof(entity)} = {JsonConvert.SerializeObject(entity)}");
+                    var id = (Guid)db.Insert(TableName, nameof(entity.Id), false, entity);
 
-                    //return insertedEntity;
+                    if (id != entity.Id)
+                        throw new ArgumentException();
+
+                    return entity;
                 }
-            }
-            catch (DataException)
-            {
-                throw;
             }
             catch (Exception e)
             {
@@ -95,14 +91,43 @@ namespace RefactorThis.Infrastructure.Data
             }
         }
 
-        public ProductEntity Update(ProductEntity entity)
+        public Product Update(Product entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var db = CreateDatabase())
+                {
+                    var updateCount = db.Update(TableName, nameof(entity.Id), entity);
+
+                    if (updateCount == 0)
+                        throw new ArgumentException();
+
+                    return entity;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new DataException($"Update error for {nameof(entity)} = {JsonConvert.SerializeObject(entity)}", e);
+            }
         }
 
-        public ProductEntity Delete(ProductEntity entity)
+        public void Delete(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var db = CreateDatabase())
+                {
+                    var product = new Product {Id = id};
+                    var deleteCount = db.Delete(TableName, nameof(product.Id), product);
+
+                    if (deleteCount == 0)
+                        throw new ArgumentException();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new DataException($"Delete error for {nameof(id)} = {JsonConvert.SerializeObject(id)}", e);
+            }
         }
     }
 }

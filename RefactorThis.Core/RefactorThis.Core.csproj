@@ -42,8 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\ProductEntity.cs" />
-    <Compile Include="Entities\ProductOptionEntity.cs" />
+    <Compile Include="Entities\Product.cs" />
+    <Compile Include="Entities\ProductOption.cs" />
     <Compile Include="Exceptions\DataException.cs" />
     <Compile Include="Interfaces\ILogger.cs" />
     <Compile Include="Interfaces\IProductRepository.cs" />

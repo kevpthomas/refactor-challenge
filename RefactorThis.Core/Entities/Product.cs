@@ -2,7 +2,7 @@
 
 namespace RefactorThis.Core.Entities
 {
-    public class ProductEntity: Entity
+    public class Product: Entity
     {
         public string Name { get; set; }
 

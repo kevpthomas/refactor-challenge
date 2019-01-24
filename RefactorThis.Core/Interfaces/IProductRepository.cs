@@ -9,13 +9,13 @@ namespace RefactorThis.Core.Interfaces
     /// </summary>
     public interface IProductRepository
     {
-        IEnumerable<ProductEntity> List();
+        IEnumerable<Product> List();
 
-        ProductEntity GetById(Guid id);
-        IEnumerable<ProductEntity> GetByName(string name);
+        Product GetById(Guid id);
+        IEnumerable<Product> GetByName(string name);
 
-        ProductEntity Add(ProductEntity entity);
-        ProductEntity Update(ProductEntity entity);
-        ProductEntity Delete(ProductEntity entity);
+        Product Add(Product entity);
+        Product Update(Product entity);
+        void Delete(Guid id);
     }
 }

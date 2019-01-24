@@ -3,7 +3,7 @@ using RefactorThis.Core.SharedKernel;
 
 namespace RefactorThis.Core.Entities
 {
-    public class ProductOptionEntity : Entity
+    public class ProductOption : Entity
     {
         public Guid ProductId { get; set; }
 

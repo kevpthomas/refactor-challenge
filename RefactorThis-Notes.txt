@@ -5,8 +5,6 @@ I've tested all of the endpoints fairly carefully, existing functionality seems 
 - all Posts work (see below for dangerous error message)
 - all Deletes work; when Delete Product, all ProductOptions are deleted without error
 
-*** NEED TO TEST UPDATES - WHEN SUBMIT NEW VS UPDATE
-
 Deliberately allow submit GUID for POST Production & ProductOption. Need to make a note in feedback README that
 this would be a consideration for removal depending on the business requirements.
 
