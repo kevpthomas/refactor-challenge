@@ -11,15 +11,15 @@ namespace RefactorThis
         {
             Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<ProductEntity, ProductDto>();
+                cfg.CreateMap<ProductEntity, ProductDto>().ReverseMap();
 
 
-                //TODO: remove this Product/ProductDto mapping
-                cfg.CreateMap<Product, ProductDto>();
+                //TODO: remove this ProductObsolete/ProductDto mapping
+                cfg.CreateMap<ProductObsolete, ProductDto>();
                 cfg.CreateMap<Products, ProductsDto>();
 
                 cfg.CreateMap<ProductOption, ProductOptionDto>();
-                cfg.CreateMap<ProductOptions, ProductOptionsDto>();
+                cfg.CreateMap<ProductOptionsObsolete, ProductOptionsDto>();
             });
         }
     }

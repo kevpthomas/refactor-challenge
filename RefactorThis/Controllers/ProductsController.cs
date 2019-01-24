@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Web.Http;
 using AutoMapper;
 using RefactorThis.ApiModels;
+using RefactorThis.Core.Entities;
 using RefactorThis.Core.Exceptions;
 using RefactorThis.Core.Interfaces;
 using RefactorThis.Models;
@@ -81,13 +82,13 @@ namespace RefactorThis.Controllers
 
         [Route]
         [HttpPost]
-        public IHttpActionResult Create(Product product)
+        public IHttpActionResult Create(ProductDto product)
         {
             return ProcessRequestAndHandleException(() =>
             {
-                product.Save();
+                var insertedProduct = _productRepository.Add(Mapper.Map<ProductEntity>(product));
             
-                return Ok(Mapper.Map<ProductDto>(product));
+                return Ok(Mapper.Map<ProductDto>(insertedProduct));
             });
         }
 
@@ -97,7 +98,7 @@ namespace RefactorThis.Controllers
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var orig = new Product(id)
+                var orig = new ProductObsolete(id)
                 {
                     Name = product.Name,
                     Description = product.Description,
@@ -118,7 +119,7 @@ namespace RefactorThis.Controllers
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var product = new Product(id);
+                var product = new ProductObsolete(id);
                 product.Delete();
                 return Ok();
             });
@@ -130,7 +131,7 @@ namespace RefactorThis.Controllers
         {
             return ProcessRequestAndHandleException(() =>
             {
-                var productOptions = new ProductOptions(productId);
+                var productOptions = new ProductOptionsObsolete(productId);
                 return Ok(Mapper.Map<ProductOptionsDto>(productOptions));
             });
         }
