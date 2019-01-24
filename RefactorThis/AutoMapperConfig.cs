@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using RefactorThis.ApiModels;
 using RefactorThis.Core.Entities;
-using RefactorThis.Models;
 
 namespace RefactorThis
 {
