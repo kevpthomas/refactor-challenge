@@ -10,6 +10,8 @@ this would be a consideration for removal depending on the business requirements
 
 *** UPDATE - looks like the Product code expects to set the Guid. Should at least comment about this discrepency.
 
+Need to add a few demonstration unit tests, and then comment about coverage.
+
 When submit bad request (e.g., duplicate Id when post new Product), dangerous error details are exposed
 {
   "Message": "An error has occurred.",
