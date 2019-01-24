@@ -114,6 +114,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="IoC\TinyIocWebApiDependencyResolver.cs" />
     <Compile Include="Models\Helpers.cs" />
     <Compile Include="Models\Products.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -132,6 +133,10 @@
     <ProjectReference Include="..\RefactorThis.Core\RefactorThis.Core.csproj">
       <Project>{bef92c2d-56ea-43c3-af2e-703000c319ba}</Project>
       <Name>RefactorThis.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RefactorThis.Infrastructure\RefactorThis.Infrastructure.csproj">
+      <Project>{f987a0b6-2cc4-41c7-b8e1-db9a215e8074}</Project>
+      <Name>RefactorThis.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -1,4 +1,6 @@
 ﻿using System.Web.Http;
+using RefactorThis.IoC;
+using TinyIoC;
 
 namespace RefactorThis
 {
@@ -9,6 +11,17 @@ namespace RefactorThis
             GlobalConfiguration.Configure(WebApiConfig.Register);
 
             AutoMapperConfig.ConfigureMappings();
+
+            ConfigureTinyIocContainer();
+        }
+
+        private void ConfigureTinyIocContainer()
+        {
+            // auto-register all dependencies
+            TinyIoCContainer.Current.AutoRegister();
+
+            // Set Web API dependency resolver
+            GlobalConfiguration.Configuration.DependencyResolver = new TinyIocWebApiDependencyResolver(TinyIoCContainer.Current);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Web.Http;
 using AutoMapper;
 using RefactorThis.ApiModels;
+using RefactorThis.Core.Interfaces;
 using RefactorThis.Models;
 
 namespace RefactorThis.Controllers
@@ -12,11 +13,18 @@ namespace RefactorThis.Controllers
         /*
          * DONE Refactor to return my DTO objects wrapped in IHttpActionResult
          * DONE Then refactor to return generic error if anything goes wrong
-         * Then refactor to use a stub logger
+         * DONE Then refactor to use a stub logger
          * Then refactor to repository
          * Then refactor to correct HTTP codes, time permitting
          *     e.g., code 422 for bad ID submission (benandel.com)
          */
+
+        private readonly ILogger _logger;
+
+        public ProductsController(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         [Route]
         [HttpGet]
@@ -190,9 +198,9 @@ namespace RefactorThis.Controllers
             {
                 return processRequest();
             }
-            catch
+            catch (Exception ex)
             {
-                //TODO: catch and log the exception
+                _logger.Log(ex);
                 return InternalServerError();
             }
         }
