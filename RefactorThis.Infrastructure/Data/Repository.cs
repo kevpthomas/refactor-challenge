@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using Newtonsoft.Json;
 using NPoco;
 using RefactorThis.Core.Entities;
@@ -46,6 +47,39 @@ namespace RefactorThis.Infrastructure.Data
 
                     return entity;
                 }
+            }
+            catch (Exception e)
+            {
+                throw new DataException($"Insert error for {nameof(entity)} = {JsonConvert.SerializeObject(entity)}", e);
+            }
+        }
+        
+        public async Task<T> AddAsync<T>(T entity) where T : Entity
+        {
+            var id = Guid.Empty;
+            
+            try
+            {
+                var block = new ActionBlock<T>(
+                    e =>
+                    {
+                        using (var db = CreateDatabase())
+                        {
+                            id = (Guid)db.Insert(TableName, nameof(e.Id), false, e);
+                        }
+                    },
+                    new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = 1 });
+
+                block.Post(entity);
+                block.Complete();
+
+                await block.Completion;
+
+                if (id != entity.Id)
+                    throw new ArgumentException();
+
+                return entity;
+
             }
             catch (Exception e)
             {

@@ -76,11 +76,11 @@ namespace RefactorThis.Controllers
 
         [Route]
         [HttpPost]
-        public IHttpActionResult Create(ProductDto product)
+        public async Task<IHttpActionResult> Create(ProductDto product)
         {
-            return ProcessRequestAndHandleException(() =>
+            return await ProcessRequestAndHandleExceptionAsync(async () =>
             {
-                var insertedProduct = _productRepository.Add(Mapper.Map<Product>(product));
+                var insertedProduct = await _productRepository.AddAsync(Mapper.Map<Product>(product));
             
                 return Ok(Mapper.Map<ProductDto>(insertedProduct));
             });
@@ -147,14 +147,14 @@ namespace RefactorThis.Controllers
 
         [Route("{productId}/options")]
         [HttpPost]
-        public IHttpActionResult CreateOption(Guid productId, ProductOptionInsertDto option)
+        public async Task<IHttpActionResult> CreateOption(Guid productId, ProductOptionInsertDto option)
         {
-            return ProcessRequestAndHandleException(() =>
+            return await ProcessRequestAndHandleExceptionAsync(async () =>
             {
                 var productOption = Mapper.Map<ProductOption>(option);
                 productOption.ProductId = productId;
 
-                var insertedProductOption = _productOptionRepository.Add(productOption);
+                var insertedProductOption = await _productOptionRepository.AddAsync(productOption);
             
                 return Ok(Mapper.Map<ProductOptionDto>(insertedProductOption));
             });
