@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Http.Results;
 using NUnit.Framework;
 using RefactorThis.ApiModels;
@@ -22,7 +23,7 @@ namespace RefactorThis.Tests.Web.Controllers.ProductsControllerTests
     public class GetAllTests : ControllersUnitTestBase<ProductsController>
     {
         [Test]
-        public void GivenAtLeastOneProductInDatabase()
+        public async Task GivenAtLeastOneProductInDatabase()
         {
             var product = new Product
             {
@@ -32,9 +33,14 @@ namespace RefactorThis.Tests.Web.Controllers.ProductsControllerTests
                 DeliveryPrice = Faker.Random.Decimal()
             };
 
-            GetDependency<IProductRepository>().Setup(x => x.List()).Returns(new List<Product> { product });
+            GetDependency<IProductRepository>()
+                .Setup(x => x.ListAsync())
+                .Returns(Task.FromResult((IEnumerable<Product>)(new List<Product> { product })));
 
-            var dto = ((OkNegotiatedContentResult<ProductsDto>)TestInstance.GetAll()).Content.Items.First();
+            var httpActionResult = await TestInstance.GetAll();
+
+            var dto = ((OkNegotiatedContentResult<ProductsDto>) httpActionResult).Content.Items.First();
+
             dto.ShouldSatisfyAllConditions(
                 () => dto.Id.ShouldBe(product.Id),
                 () => dto.Name.ShouldBe(product.Name),
@@ -44,23 +50,27 @@ namespace RefactorThis.Tests.Web.Controllers.ProductsControllerTests
         }
 
         [Test]
-        public void GivenDatabaseError()
+        public async Task GivenDatabaseError()
         {
             GetDependency<IProductRepository>()
-                .Setup(x => x.List())
+                .Setup(x => x.ListAsync())
                 .Throws(new DataException(Faker.Random.String()));
 
-            TestInstance.GetAll().ShouldBeOfType<BadRequestResult>();
+            var httpActionResult = await TestInstance.GetAll();
+
+            httpActionResult.ShouldBeOfType<BadRequestResult>();
         }
 
         [Test]
-        public void GivenServerError()
+        public async Task GivenServerError()
         {
             GetDependency<IProductRepository>()
-                .Setup(x => x.List())
+                .Setup(x => x.ListAsync())
                 .Throws(new Exception(Faker.Random.String()));
+            
+            var httpActionResult = await TestInstance.GetAll();
 
-            TestInstance.GetAll().ShouldBeOfType<InternalServerErrorResult>();
+            httpActionResult.ShouldBeOfType<InternalServerErrorResult>();
         }
     }
 }

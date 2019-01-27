@@ -35,6 +35,24 @@ namespace RefactorThis.Infrastructure.Data
                 throw new DataException("Select error retrieving all products", e);
             }
         }
+        
+        public async Task<IEnumerable<Product>> ListAsync()
+        {
+            try
+            {
+                var sql = new Sql().Append(GenericSelect);
+
+                using (var db = CreateDatabase()) 
+                {
+                    var products = await db.FetchAsync<Product>(sql);
+                    return products;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new DataException("Select error retrieving all products", e);
+            }
+        }
 
         public Product GetById(Guid id)
         {
@@ -46,6 +64,24 @@ namespace RefactorThis.Infrastructure.Data
                 {
                     var product = db.Fetch<Product>(sql).SingleOrDefault();
                     return product;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new DataException($"Select error for {nameof(id)} = {id}", e);
+            }
+        }
+        
+        public async Task<Product> GetByIdAsync(Guid id)
+        {
+            try
+            {
+                var sql = new Sql().Append($"{GenericSelect} where id = @0", id);
+
+                using (var db = CreateDatabase()) 
+                {
+                    var products = await db.FetchAsync<Product>(sql);
+                    return products.SingleOrDefault();
                 }
             }
             catch (Exception e)
@@ -68,43 +104,6 @@ namespace RefactorThis.Infrastructure.Data
             catch (Exception e)
             {
                 throw new DataException($"Select error for {nameof(name)} = '{name}'", e);
-            }
-        }
-
-
-        public async Task<IEnumerable<Product>> ListAsync()
-        {
-            try
-            {
-                var sql = new Sql().Append(GenericSelect);
-
-                using (var db = CreateDatabase()) 
-                {
-                    var products = await db.FetchAsync<Product>(sql);
-                    return products;
-                }
-            }
-            catch (Exception e)
-            {
-                throw new DataException("Select error retrieving all products", e);
-            }
-        }
-
-        public async Task<Product> GetByIdAsync(Guid id)
-        {
-            try
-            {
-                var sql = new Sql().Append($"{GenericSelect} where id = @0", id);
-
-                using (var db = CreateDatabase()) 
-                {
-                    var products = await db.FetchAsync<Product>(sql);
-                    return products.SingleOrDefault();
-                }
-            }
-            catch (Exception e)
-            {
-                throw new DataException($"Select error for {nameof(id)} = {id}", e);
             }
         }
 

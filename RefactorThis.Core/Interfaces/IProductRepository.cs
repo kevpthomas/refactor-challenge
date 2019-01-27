@@ -11,11 +11,12 @@ namespace RefactorThis.Core.Interfaces
     public interface IProductRepository : IRepository
     {
         IEnumerable<Product> List();
+        Task<IEnumerable<Product>> ListAsync();
 
         Product GetById(Guid id);
-        IEnumerable<Product> GetByName(string name);
-        Task<IEnumerable<Product>> ListAsync();
         Task<Product> GetByIdAsync(Guid id);
+
+        IEnumerable<Product> GetByName(string name);
         Task<IEnumerable<Product>> GetByNameAsync(string name);
     }
 }
