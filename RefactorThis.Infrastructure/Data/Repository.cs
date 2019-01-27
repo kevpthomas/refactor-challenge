@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Newtonsoft.Json;
 using NPoco;
-using RefactorThis.Core.Entities;
 using RefactorThis.Core.Exceptions;
 using RefactorThis.Core.Interfaces;
 using RefactorThis.Core.SharedKernel;
@@ -40,6 +37,7 @@ namespace RefactorThis.Infrastructure.Data
             {
                 using (var db = CreateDatabase())
                 {
+                    // https://stackoverflow.com/questions/22857315/petapoco-fails-inserting-record-with-guid-newid-primary-key
                     var id = (Guid)db.Insert(TableName, nameof(entity.Id), false, entity);
 
                     if (id != entity.Id)
@@ -65,6 +63,7 @@ namespace RefactorThis.Infrastructure.Data
                     {
                         using (var db = CreateDatabase())
                         {
+                            // https://stackoverflow.com/questions/22857315/petapoco-fails-inserting-record-with-guid-newid-primary-key
                             id = (Guid)db.Insert(TableName, nameof(e.Id), false, e);
                         }
                     },
@@ -93,7 +92,7 @@ namespace RefactorThis.Infrastructure.Data
             {
                 using (var db = CreateDatabase())
                 {
-                    var updateCount = db.Update(TableName, nameof(entity.Id), entity);
+                    var updateCount = db.Update(entity);
 
                     if (updateCount == 0)
                         throw new ArgumentException();
@@ -109,29 +108,17 @@ namespace RefactorThis.Infrastructure.Data
 
         public async Task<T> UpdateAsync<T>(T entity) where T : Entity
         {
-            var updateCount = 0;
-
             try
             {
-                var block = new ActionBlock<T>(
-                    e =>
-                    {
-                        using (var db = CreateDatabase())
-                        {
-                            updateCount = db.Update(TableName, nameof(entity.Id), entity);
-                        }
-                    },
-                    new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = 1 });
+                using (var db = CreateDatabase())
+                {
+                    var updateCount = await db.UpdateAsync(entity);
 
-                block.Post(entity);
-                block.Complete();
+                    if (updateCount == 0)
+                        throw new ArgumentException();
 
-                await block.Completion;
-
-                if (updateCount == 0)
-                    throw new ArgumentException();
-
-                return entity;
+                    return entity;
+                }
             }
             catch (Exception e)
             {
@@ -145,7 +132,7 @@ namespace RefactorThis.Infrastructure.Data
             {
                 using (var db = CreateDatabase())
                 {
-                    var deleteCount = db.Delete(TableName, nameof(entity.Id), entity);
+                    var deleteCount = db.Delete(entity);
 
                     if (deleteCount == 0)
                         throw new ArgumentException();
@@ -159,27 +146,15 @@ namespace RefactorThis.Infrastructure.Data
 
         public async Task DeleteAsync<T>(T entity) where T : Entity
         {
-            var deleteCount = 0;
-
             try
             {
-                var block = new ActionBlock<T>(
-                    e =>
-                    {
-                        using (var db = CreateDatabase())
-                        {
-                            deleteCount = db.Delete(TableName, nameof(entity.Id), entity);
-                        }
-                    },
-                    new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = 1 });
+                using (var db = CreateDatabase())
+                {
+                    var deleteCount = await db.DeleteAsync(entity);
 
-                block.Post(entity);
-                block.Complete();
-
-                await block.Completion;
-
-                if (deleteCount == 0)
-                    throw new ArgumentException();
+                    if (deleteCount == 0)
+                        throw new ArgumentException();
+                }
             }
             catch (Exception e)
             {

@@ -11,6 +11,29 @@ Once completed, send back your solution in a zip file (source code only please t
 Good luck!
 
 
+## Improvement Updates (28/01/2019)
+The Xero refactor assessment feedback raised the following:
+* No service layer added
+* Did not add a global exception handler
+* Did not use async methods in API controllers
+* Used inheritance in models instead of composition (minor)
+
+All of these are valid points. The short answer is I decided to focus initially on overall architecture and security vulnerabilities as
+my top priorities, and then reassess after completing those changes. I decided to stop refactoring after I finished those items due to
+time constraints.
+
+I have now done a bit more refactoring, see below for more details.
+
+### Did not use async methods in API controllers
+I refactored the ProductsController endpoints to be async, and added async methods to the repositories. I retained the synchronous repository
+methods to follow standard .NET library practices to have both sync and async methods. I also refactored the unit tests so that I have examples
+of tests over async methods.
+
+Note that the NPoco library has a bug when inserting new records using a pre-generated GUID primary key, thereby requiring an Insert
+method overload requesting the tableName, primaryKeyName, an autoIncrement flag, and the poco instance. There is no equivalent asynchronous
+method on the NPoco IDatabase definition. I overcame this issue using a 
+[Dataflow (Task Parallel Library)](https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/dataflow-task-parallel-library) Action Block.
+
 ## Improvements
 I decided to take a comprehensive approach to improving the supplied code base, because this is for a senior developer position. Therefore,
 I evaluated the overall architecture as well as the code, and made fairly comprehensive changes to the original code for the products API.
