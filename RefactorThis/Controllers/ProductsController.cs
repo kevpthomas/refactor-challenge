@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Http;
 using AutoMapper;
 using RefactorThis.ApiModels;
@@ -35,11 +36,11 @@ namespace RefactorThis.Controllers
 
         [Route]
         [HttpGet]
-        public IHttpActionResult GetAll()
+        public async Task<IHttpActionResult> GetAll()
         {
-            return ProcessRequestAndHandleException(() =>
+            return await ProcessRequestAndHandleExceptionAsync(async () =>
             {
-                var products = _productRepository.List();
+                var products = await _productRepository.ListAsync();
                 var productsDto = new ProductsDto
                 {
                     Items = Mapper.Map<IEnumerable<ProductDto>>(products)
@@ -51,11 +52,11 @@ namespace RefactorThis.Controllers
 
         [Route("search")]
         [HttpGet]
-        public IHttpActionResult SearchByName(string name)
+        public async Task<IHttpActionResult> SearchByName(string name)
         {
-            return ProcessRequestAndHandleException(() =>
+            return await ProcessRequestAndHandleExceptionAsync(async () =>
             {
-                var products = _productRepository.GetByName(name);
+                var products = await _productRepository.GetByNameAsync(name);
 
                 var productsDto = new ProductsDto
                 {
@@ -68,11 +69,11 @@ namespace RefactorThis.Controllers
 
         [Route("{id}")]
         [HttpGet]
-        public IHttpActionResult GetProduct(Guid id)
+        public async Task<IHttpActionResult> GetProduct(Guid id)
         {
-            return ProcessRequestAndHandleException(() =>
+            return await ProcessRequestAndHandleExceptionAsync(async () =>
             {
-                var product = _productRepository.GetById(id);
+                var product = await _productRepository.GetByIdAsync(id);
 
                 if (product == null)
                     return NotFound();
@@ -193,6 +194,38 @@ namespace RefactorThis.Controllers
 
                 return Ok();
             });
+        }
+
+        /// <summary>
+        /// Simple method to provide standardised exception handling for all requests.
+        /// </summary>
+        /// <param name="processRequest">
+        /// Function to provide happy path request processing.
+        /// </param>
+        /// <returns>
+        /// Output from happy path request processing, or an internal server error in the event
+        /// of an unhandled exception.
+        /// </returns>
+        /// <remarks>
+        /// This method ensures no leakage of sensitive framework details.
+        /// </remarks>
+        private async Task<IHttpActionResult> ProcessRequestAndHandleExceptionAsync(Func<Task<IHttpActionResult>> processRequest)
+        {
+            try
+            {
+                return await processRequest();
+            }
+            catch (DataException ex)
+            {
+                // making an assumption that any SQL exception is the result of invalid parameters in the request
+                _logger.Log(ex);
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(ex);
+                return InternalServerError();
+            }
         }
 
         /// <summary>

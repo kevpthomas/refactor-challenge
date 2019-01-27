@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using RefactorThis.Core.Entities;
 
 namespace RefactorThis.Core.Interfaces
@@ -13,5 +14,8 @@ namespace RefactorThis.Core.Interfaces
 
         Product GetById(Guid id);
         IEnumerable<Product> GetByName(string name);
+        Task<IEnumerable<Product>> ListAsync();
+        Task<Product> GetByIdAsync(Guid id);
+        Task<IEnumerable<Product>> GetByNameAsync(string name);
     }
 }

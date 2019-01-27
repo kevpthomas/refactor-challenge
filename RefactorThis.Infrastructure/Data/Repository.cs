@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NPoco;
+using RefactorThis.Core.Entities;
 using RefactorThis.Core.Exceptions;
 using RefactorThis.Core.Interfaces;
 using RefactorThis.Core.SharedKernel;
@@ -83,6 +87,5 @@ namespace RefactorThis.Infrastructure.Data
                 throw new DataException($"Delete error for {nameof(entity)} = {JsonConvert.SerializeObject(entity)}", e);
             }
         }
-
     }
 }
