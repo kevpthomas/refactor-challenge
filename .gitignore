@@ -76,6 +76,7 @@ publish
 # Others
 [Bb]in
 [Oo]bj
+**/App_Data/*
 sql
 TestResults
 *.Cache
