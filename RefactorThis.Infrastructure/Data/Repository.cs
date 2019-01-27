@@ -107,6 +107,38 @@ namespace RefactorThis.Infrastructure.Data
             }
         }
 
+        public async Task<T> UpdateAsync<T>(T entity) where T : Entity
+        {
+            var updateCount = 0;
+
+            try
+            {
+                var block = new ActionBlock<T>(
+                    e =>
+                    {
+                        using (var db = CreateDatabase())
+                        {
+                            updateCount = db.Update(TableName, nameof(entity.Id), entity);
+                        }
+                    },
+                    new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = 1 });
+
+                block.Post(entity);
+                block.Complete();
+
+                await block.Completion;
+
+                if (updateCount == 0)
+                    throw new ArgumentException();
+
+                return entity;
+            }
+            catch (Exception e)
+            {
+                throw new DataException($"Update error for {nameof(entity)} = {JsonConvert.SerializeObject(entity)}", e);
+            }
+        }
+
         public void Delete<T>(T entity) where T : Entity
         {
             try
@@ -118,6 +150,36 @@ namespace RefactorThis.Infrastructure.Data
                     if (deleteCount == 0)
                         throw new ArgumentException();
                 }
+            }
+            catch (Exception e)
+            {
+                throw new DataException($"Delete error for {nameof(entity)} = {JsonConvert.SerializeObject(entity)}", e);
+            }
+        }
+
+        public async Task DeleteAsync<T>(T entity) where T : Entity
+        {
+            var deleteCount = 0;
+
+            try
+            {
+                var block = new ActionBlock<T>(
+                    e =>
+                    {
+                        using (var db = CreateDatabase())
+                        {
+                            deleteCount = db.Delete(TableName, nameof(entity.Id), entity);
+                        }
+                    },
+                    new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = 1 });
+
+                block.Post(entity);
+                block.Complete();
+
+                await block.Completion;
+
+                if (deleteCount == 0)
+                    throw new ArgumentException();
             }
             catch (Exception e)
             {

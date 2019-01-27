@@ -88,14 +88,14 @@ namespace RefactorThis.Controllers
 
         [Route("{id}")]
         [HttpPut]
-        public IHttpActionResult Update(Guid id, ProductUpdateDto productUpdate)
+        public async Task<IHttpActionResult> Update(Guid id, ProductUpdateDto productUpdate)
         {
-            return ProcessRequestAndHandleException(() =>
+            return await ProcessRequestAndHandleExceptionAsync(async () =>
             {
                 var product = Mapper.Map<Product>(productUpdate);
                 product.Id = id;
 
-                var updatedProduct = _productRepository.Update(product);
+                var updatedProduct = await _productRepository.UpdateAsync(product);
             
                 return Ok(Mapper.Map<ProductDto>(updatedProduct));
             });
@@ -103,11 +103,11 @@ namespace RefactorThis.Controllers
 
         [Route("{id}")]
         [HttpDelete]
-        public IHttpActionResult Delete(Guid id)
+        public async Task<IHttpActionResult> Delete(Guid id)
         {
-            return ProcessRequestAndHandleException(() =>
+            return await ProcessRequestAndHandleExceptionAsync(async () =>
             {
-                _productRepository.Delete(Product.FromId(id));
+                await _productRepository.DeleteAsync(Product.FromId(id));
 
                 return Ok();
             });
@@ -162,15 +162,15 @@ namespace RefactorThis.Controllers
 
         [Route("{productId}/options/{id}")]
         [HttpPut]
-        public IHttpActionResult UpdateOption(Guid productId, Guid id, ProductOptionUpdateDto option)
+        public async Task<IHttpActionResult> UpdateOption(Guid productId, Guid id, ProductOptionUpdateDto option)
         {
-            return ProcessRequestAndHandleException(() =>
+            return await ProcessRequestAndHandleExceptionAsync(async () =>
             {
                 var productOption = Mapper.Map<ProductOption>(option);
                 productOption.Id = id;
                 productOption.ProductId = productId;
 
-                var updatedProductOption = _productOptionRepository.Update(productOption);
+                var updatedProductOption = await _productOptionRepository.UpdateAsync(productOption);
             
                 return Ok(Mapper.Map<ProductOptionDto>(updatedProductOption));
             });
@@ -178,11 +178,11 @@ namespace RefactorThis.Controllers
 
         [Route("{productId}/options/{id}")]
         [HttpDelete]
-        public IHttpActionResult DeleteOption(Guid productId, Guid id)
+        public async Task<IHttpActionResult> DeleteOption(Guid productId, Guid id)
         {
-            return ProcessRequestAndHandleException(() =>
+            return await ProcessRequestAndHandleExceptionAsync(async () =>
             {
-                _productOptionRepository.Delete(ProductOption.FromId(productId, id));
+                await _productOptionRepository.DeleteAsync(ProductOption.FromId(productId, id));
 
                 return Ok();
             });
@@ -206,38 +206,6 @@ namespace RefactorThis.Controllers
             try
             {
                 return await processRequest();
-            }
-            catch (DataException ex)
-            {
-                // making an assumption that any SQL exception is the result of invalid parameters in the request
-                _logger.Log(ex);
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                _logger.Log(ex);
-                return InternalServerError();
-            }
-        }
-
-        /// <summary>
-        /// Simple method to provide standardised exception handling for all requests.
-        /// </summary>
-        /// <param name="processRequest">
-        /// Function to provide happy path request processing.
-        /// </param>
-        /// <returns>
-        /// Output from happy path request processing, or an internal server error in the event
-        /// of an unhandled exception.
-        /// </returns>
-        /// <remarks>
-        /// This method ensures no leakage of sensitive framework details.
-        /// </remarks>
-        private IHttpActionResult ProcessRequestAndHandleException(Func<IHttpActionResult> processRequest)
-        {
-            try
-            {
-                return processRequest();
             }
             catch (DataException ex)
             {

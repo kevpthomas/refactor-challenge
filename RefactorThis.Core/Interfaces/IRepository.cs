@@ -9,8 +9,12 @@ namespace RefactorThis.Core.Interfaces
     public interface IRepository
     {
         T Add<T>(T entity) where T : Entity;
-        void Delete<T>(T entity) where T : Entity;
-        T Update<T>(T entity) where T : Entity;
         Task<T> AddAsync<T>(T entity) where T : Entity;
+
+        void Delete<T>(T entity) where T : Entity;
+        Task DeleteAsync<T>(T entity) where T : Entity;
+
+        T Update<T>(T entity) where T : Entity;
+        Task<T> UpdateAsync<T>(T entity) where T : Entity;
     }
 }
