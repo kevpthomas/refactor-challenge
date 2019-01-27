@@ -24,6 +24,19 @@ time constraints.
 
 I have now done a bit more refactoring, see below for more details.
 
+### No service layer added
+The existing project was small with relatively simple operations in the existing API endpoints, so I decided to not add a service layer.
+If I was to add such a layer to my refactored architecture, I would:
+* Add a generic ServiceResponse class to my Core.SharedKernel namespace.
+  This class would encapsulate a status (e.g., OK, Error) and the data for the response.
+* Add an IProductsService to my Core.Interfaces namespace. This interface would contain methods
+  mirroring those on the repositories, and would return ServiceResponse in each case. Data would be
+  Core.Entities classes.
+* Implement IProductsService in Infrastructure.Services. The implementation would have repository dependencies
+  injected - refactored from the ProductsController.
+* I would inject an instance of IProductsService into ProductsController. I would still need to map
+  from Core.Entities to Web.ApiModels within the controller.
+
 ### Did not use async methods in API controllers
 I refactored the ProductsController endpoints to be async, and added async methods to the repositories. I retained the synchronous repository
 methods to follow standard .NET library practices to have both sync and async methods. I also refactored the unit tests so that I have examples
