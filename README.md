@@ -34,6 +34,18 @@ method overload requesting the tableName, primaryKeyName, an autoIncrement flag,
 method on the NPoco IDatabase definition. I overcame this issue using a 
 [Dataflow (Task Parallel Library)](https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/dataflow-task-parallel-library) Action Block.
 
+### Did not add a global exception handler
+This could be accomplished using several different options. One option could be to have the API implement a third-part exception logging library 
+such as [Elmah.io](https://elmah.io/) which would log all uncaught exceptions. Another option could be to create a custom global exception handler
+as described in [Global Error Handling in ASP.NET Web API 2](https://docs.microsoft.com/en-us/aspnet/web-api/overview/error-handling/web-api-global-error-handling).
+I have not implemented a solution for global exception handling.
+
+### Used inheritance in models instead of composition
+I decided to use inheritance because of the simplistic design for the API DTO models. Also I wanted to maintain the existing API endpoint contracts as
+much as possible. However, I completely agree that generally it's preferable to use composition over inheritance. I would be keen to see what
+Xero would recommend for this scenario.
+
+
 ## Improvements
 I decided to take a comprehensive approach to improving the supplied code base, because this is for a senior developer position. Therefore,
 I evaluated the overall architecture as well as the code, and made fairly comprehensive changes to the original code for the products API.
