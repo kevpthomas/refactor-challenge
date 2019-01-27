@@ -115,11 +115,11 @@ namespace RefactorThis.Controllers
 
         [Route("{productId}/options")]
         [HttpGet]
-        public IHttpActionResult GetOptions(Guid productId)
+        public async Task<IHttpActionResult> GetOptions(Guid productId)
         {
-            return ProcessRequestAndHandleException(() =>
+            return await ProcessRequestAndHandleExceptionAsync(async () =>
             {
-                var productOptions = _productOptionRepository.List(productId);
+                var productOptions = await _productOptionRepository.ListAsync(productId);
 
                 var productOptionsDto = new ProductOptionsDto
                 {
@@ -132,11 +132,11 @@ namespace RefactorThis.Controllers
 
         [Route("{productId}/options/{id}")]
         [HttpGet]
-        public IHttpActionResult GetOption(Guid productId, Guid id)
+        public async Task<IHttpActionResult> GetOption(Guid productId, Guid id)
         {
-            return ProcessRequestAndHandleException(() =>
+            return await ProcessRequestAndHandleExceptionAsync(async () =>
             {
-                var productOption = _productOptionRepository.GetById(productId, id);
+                var productOption = await _productOptionRepository.GetByIdAsync(productId, id);
 
                 if (productOption == null)
                     return NotFound();

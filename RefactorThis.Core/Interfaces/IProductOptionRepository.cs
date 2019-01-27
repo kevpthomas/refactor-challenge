@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using RefactorThis.Core.Entities;
 
 namespace RefactorThis.Core.Interfaces
@@ -10,7 +11,9 @@ namespace RefactorThis.Core.Interfaces
     public interface IProductOptionRepository : IRepository
     {
         IEnumerable<ProductOption> List(Guid productId);
+        Task<IEnumerable<ProductOption>> ListAsync(Guid productId);
 
         ProductOption GetById(Guid productId, Guid id);
+        Task<ProductOption> GetByIdAsync(Guid productId, Guid id);
     }
 }
