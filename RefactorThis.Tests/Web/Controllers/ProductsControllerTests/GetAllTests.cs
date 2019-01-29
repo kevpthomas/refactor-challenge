@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http.Results;
@@ -7,7 +6,6 @@ using NUnit.Framework;
 using RefactorThis.ApiModels;
 using RefactorThis.Controllers;
 using RefactorThis.Core.Entities;
-using RefactorThis.Core.Exceptions;
 using RefactorThis.Core.Interfaces;
 using Shouldly;
 
@@ -47,30 +45,6 @@ namespace RefactorThis.Tests.Web.Controllers.ProductsControllerTests
                 () => dto.Description.ShouldBe(product.Description),
                 () => dto.DeliveryPrice.ShouldBe(product.DeliveryPrice)
                 );
-        }
-
-        [Test]
-        public async Task GivenDatabaseError()
-        {
-            GetDependency<IProductRepository>()
-                .Setup(x => x.ListAsync())
-                .Throws(new DataException(Faker.Random.String()));
-
-            var httpActionResult = await TestInstance.GetAll();
-
-            httpActionResult.ShouldBeOfType<BadRequestResult>();
-        }
-
-        [Test]
-        public async Task GivenServerError()
-        {
-            GetDependency<IProductRepository>()
-                .Setup(x => x.ListAsync())
-                .Throws(new Exception(Faker.Random.String()));
-            
-            var httpActionResult = await TestInstance.GetAll();
-
-            httpActionResult.ShouldBeOfType<InternalServerErrorResult>();
         }
     }
 }

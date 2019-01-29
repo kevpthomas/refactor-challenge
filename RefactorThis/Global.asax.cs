@@ -1,6 +1,7 @@
 ﻿using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
 using RefactorThis.Core.Interfaces;
+using RefactorThis.Errors;
 using RefactorThis.IoC;
 using TinyIoC;
 
@@ -17,7 +18,15 @@ namespace RefactorThis
             ConfigureTinyIocContainer();
 
             // Configure global exception logger
-            GlobalConfiguration.Configuration.Services.Add(typeof(IExceptionLogger), new WebExceptionLogger(TinyIoCContainer.Current.Resolve<ILogger>()));
+            GlobalConfiguration
+                .Configuration
+                .Services
+                .Add(typeof(IExceptionLogger), new WebExceptionLogger(TinyIoCContainer.Current.Resolve<ILogger>()));
+
+            GlobalConfiguration
+                .Configuration
+                .Services
+                .Replace(typeof(IExceptionHandler), new WebExceptionHandler());
         }
 
         private void ConfigureTinyIocContainer()
