@@ -1,4 +1,6 @@
 ﻿using System.Web.Http;
+using System.Web.Http.ExceptionHandling;
+using RefactorThis.Core.Interfaces;
 using RefactorThis.IoC;
 using TinyIoC;
 
@@ -13,6 +15,9 @@ namespace RefactorThis
             AutoMapperConfig.ConfigureMappings();
 
             ConfigureTinyIocContainer();
+
+            // Configure global exception logger
+            GlobalConfiguration.Configuration.Services.Add(typeof(IExceptionLogger), new WebExceptionLogger(TinyIoCContainer.Current.Resolve<ILogger>()));
         }
 
         private void ConfigureTinyIocContainer()

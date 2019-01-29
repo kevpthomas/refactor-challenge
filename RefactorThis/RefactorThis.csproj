@@ -120,6 +120,7 @@
     <Compile Include="IoC\TinyIocWebApiDependencyResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TinyIoC.cs" />
+    <Compile Include="WebExceptionLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
